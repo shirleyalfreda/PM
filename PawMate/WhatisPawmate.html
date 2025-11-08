@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawMate - Building a Trust-Driven Community Pet Care Platform</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- AOS - Animate On Scroll -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF9F43', // Soft orange as primary color
+                        secondary: '#FFBE7D', // Lighter orange as secondary color
+                        tertiary: '#FFF3CD', // Very light yellow as accent color
+                        dark: '#2A2D34', // Dark color for text
+                        light: '#F7F7F7', // Light color for background
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'custom': '0 4px 20px rgba(0, 0, 0, 0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+            .bg-gradient {
+                background: linear-gradient(135deg, #FF9F43 0%, #FFBE7D 100%);
+            }
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+        }
+    </style>
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF6B8B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff476a;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Navbar scroll effect */
+        .navbar-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Card hover effect */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Image carousel styles */
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        .carousel-item {
+            min-width: 100%;
+        }
+        .carousel-indicators {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+        .carousel-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .carousel-indicator.active {
+            background-color: white;
+            width: 24px;
+            border-radius: 5px;
+        }
+        
+        /* Wave divider */
+        .wave-divider {
+            position: absolute;
+            width: 100%;
+            height: 100px;
+            bottom: 0;
+            left: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,181.3C960,181,1056,203,1152,202.7C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: bottom;
+        }
+        
+        /* Role selection animation */
+        .role-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .role-card:hover {
+            transform: scale(1.03);
+        }
+        .role-card.active {
+            border-color: #FF6B8B;
+            background-color: rgba(255, 107, 139, 0.05);
+        }
+        
+        /* Service process animation */
+        .process-step {
+            position: relative;
+        }
+        .process-step::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background-color: #E5E7EB;
+            z-index: 1;
+        }
+        .process-step:last-child::after {
+            display: none;
+        }
+        .process-step-number {
+            z-index: 2;
+            position: relative;
+        }
+        
+        /* Phone frame styles */
+        .phone-frame {
+            position: relative;
+            width: 100%;
+            max-width: 350px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            border-radius: 40px;
+            background-color: #1a1a1a;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Phone top camera */
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            height: 20px;
+            border-radius: 10px;
+            background-color: #111;
+        }
+        
+        /* Phone screen */
+        .phone-screen {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            background-color: #fff;
+            aspect-ratio: 9/19.5;
+        }
+        
+        /* Phone screen content */
+        .phone-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="bg-light text-dark font-sans">
+    <!-- Navigation -->
+    <nav id="navbar" class="bg-white py-4 px-6 shadow-sm">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="flex items-center space-x-2">
+                <img src="https://p11-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/c8871e1686be425b9e1383e8d5a9c88b.png~tplv-a9rns2rl98-24:720:720.png?rcl=202511081906101AACAE8A77C7A4A6BB4A&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1763204770&x-signature=7jUH30%2BF%2Bklow%2B6ht2mUDZcMo8Q%3D" alt="PawMate Logo" class="w-10 h-10">
+                <span class="text-xl font-bold text-dark">PawMate</span>
+            </a>
+            
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#overview" class="text-dark hover:text-primary transition-custom">Project Overview</a>
+                <a href="#problem" class="text-dark hover:text-primary transition-custom">Problem Statement</a>
+                <a href="#solution" class="text-dark hover:text-primary transition-custom">Solution</a>
+                <a href="#market" class="text-dark hover:text-primary transition-custom">Market Analysis</a>
+                <a href="#vision" class="text-dark hover:text-primary transition-custom">Vision</a>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button id="menu-toggle" class="md:hidden text-dark focus:outline-none">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white absolute top-full left-0 right-0 shadow-md z-50">
+            <div class="container mx-auto px-6 py-4 flex flex-col space-y-4">
+                <a href="#overview" class="text-dark hover:text-primary transition-custom">Project Overview</a>
+                <a href="#problem" class="text-dark hover:text-primary transition-custom">Problem Statement</a>
+                <a href="#solution" class="text-dark hover:text-primary transition-custom">Solution</a>
+                <a href="#product" class="text-dark hover:text-primary transition-custom">Product Showcase</a>
+                <a href="#market" class="text-dark hover:text-primary transition-custom">Market Analysis</a>
+                <a href="#vision" class="text-dark hover:text-primary transition-custom">Vision</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative h-screen flex items-center justify-center overflow-hidden">
+        <!-- Background Image -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/bfba9af13336490d883b744a616dd913.jpg~tplv-a9rns2rl98-24:720:720.png?rcl=20251107131837DAF46C3791EEDE935BC0&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1763097518&x-signature=xY%2B73TDlSM0fkPt1fzDNvvDQ5Qo%3D" alt="Pet with Owner" class="w-full h-full object-cover">
+            <!-- Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-r from-primary/80 to-secondary/80"></div>
+        </div>
+        
+        <!-- Content -->
+        <div class="container mx-auto px-6 relative z-10 text-center text-white" data-aos="fade-up" data-aos-duration="1000">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6 text-shadow">PawMate</h1>
+            <h2 class="text-2xl md:text-3xl font-semibold mb-8 max-w-3xl mx-auto">Building a Trust-Driven Community Pet Care Platform</h2>
+            <p class="text-xl md:text-2xl mb-12 max-w-3xl mx-auto">Busy schedules should never come between you and your pet. Connect with rigorously verified college students and community pet caregivers for instant, reliable, and standardized dog walking and pet care services.</p>
+            <div class="flex flex-wrap justify-center gap-6">
+                <a href="#overview" class="bg-white text-primary font-medium px-8 py-4 rounded-full shadow-custom hover:shadow-lg transition-custom text-lg">Learn More</a>
+                <a href="#solution" class="bg-transparent border-2 border-white text-white font-medium px-8 py-4 rounded-full hover:bg-white hover:text-primary transition-custom text-lg">Service Process</a>
+            </div>
+        </div>
+        
+        <!-- Scroll Down Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
+            <a href="#overview" class="text-white text-3xl">
+                <i class="fa fa-angle-down"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Project Overview -->
+    <section id="overview" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Project Overview</h2>
+                <div class="w-24 h-1 bg-primary mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-light p-8 rounded-xl shadow-custom card-hover" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fa fa-heart text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Project Inspiration</h3>
+                    <p class="text-gray-600">Born from the emotional pain point of modern urban pet owners who "are too busy to spend time with their pets," we aim to eliminate this guilt and help every responsible pet owner find reliable temporary caregivers who treat pets like family when they're busy.</p>
+                </div>
+                
+                <div class="bg-light p-8 rounded-xl shadow-custom card-hover" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fa fa-balance-scale text-secondary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Macro Benchmarking</h3>
+                    <p class="text-gray-600">Like "Uber for pet care," we've adopted a market-proven two-sided platform model that connects pet owners with dog walkers/caregivers, building trust through platform-verified identities, pet care knowledge, and user reviews.</p>
+                </div>
+                
+                <div class="bg-light p-8 rounded-xl shadow-custom card-hover" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 rounded-full bg-tertiary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fa fa-lightbulb-o text-tertiary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Core Value</h3>
+                    <p class="text-gray-600">More than just a service platform, we're committed to building a sustainable ecosystem that solves social problems, enhances community trust, empowers student growth, and brings happier, healthier lives to pets.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Statement -->
+    <section id="problem" class="py-20 bg-light">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Problem Statement</h2>
+                <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+                <p class="text-gray-600 max-w-2xl mx-auto">The current pet service market has significant gaps, creating a vicious cycle that affects pet owners, pets, and community harmony.</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2" data-aos="fade-right">
+                    <img src="https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/2726bf6f3caa4d4e8647039275e1a6ee.jpg~tplv-a9rns2rl98-24:720:720.png?rcl=20251107131837DAF46C3791EEDE935BC0&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1763097518&x-signature=a9QoaogPXUnat9P4i6YBdaNm0%2B8%3D" alt="Pet Destructive Behavior" class="rounded-xl shadow-xl w-full">
+                </div>
+                
+                <div class="md:w-1/2" data-aos="fade-left" data-aos-delay="200">
+                    <div class="space-y-8">
+                        <div class="flex">
+                            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl">1</div>
+                            <div class="ml-6">
+                                <h3 class="text-xl font-semibold mb-2">Insufficient and Rigid Service Supply</h3>
+                                <p class="text-gray-600">Traditional pet stores have fixed service hours and cannot meet sudden, flexible care needs; private nannies are expensive and difficult to verify for reliability.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl">2</div>
+                            <div class="ml-6">
+                                <h3 class="text-xl font-semibold mb-2">Lack of Trust System</h3>
+                                <p class="text-gray-600">Pet owners find it hard to trust strangers with their pets, whom they consider family. Online platforms have disorganized information and lack unified verification and trust背书.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex">
+                            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xl">3</div>
+                            <div class="ml-6">
+                                <h3 class="text-xl font-semibold mb-2">Escalating Community Conflicts</h3>
+                                <p class="text-gray-600">Pets lacking exercise and companionship due to busy owners may develop behavioral issues (such as barking, destruction), leading to neighborhood disputes and undermining community harmony.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution -->
+    <section id="solution" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Solution</h2>
+                <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+                <p class="text-gray-600 max-w-2xl mx-auto">For urban pet owners trapped in fragmented and unreliable pet services, we provide a comprehensive pet care platform that integrates trustworthy services, standardized processes, and community connections.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+                <div data-aos="fade-right">
+                    <h3 class="text-2xl font-semibold mb-6">Core Services</h3>
+                    <!-- Pet Owner Services -->
+                    <div id="owner-services" class="space-y-6">
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mr-4">
+                                <i class="fa fa-clock-o text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium mb-2">On-Demand Dog Walking</h4>
+                                <p class="text-gray-600">Book on-demand, flexibly matching pets with caregivers' availability to solve the problem of pet owners being temporarily unable to accompany their pets.</p>
+                            </div>
+                        </li>
+                        
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mr-4">
+                                <i class="fa fa-home text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium mb-2">Community Pet Boarding Network</h4>
+                                <p class="text-gray-600">Provide pet owners with a安心 temporary boarding option when traveling. Caregivers undergo strict screening to ensure pets receive proper care.</p>
+                            </div>
+                        </li>
+                        
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mr-4">
+                                <i class="fa fa-shield text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium mb-2">Standardized Trust System</h4>
+                                <p class="text-gray-600">All service providers undergo identity verification and basic pet care training, establishing a reliable trust mechanism for pet owners to feel confident in entrusting their pets.</p>
+                            </div>
+                        </li>
+                        
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mr-4">
+                                <i class="fa fa-users text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium mb-2">Community Connection and Interaction</h4>
+                                <p class="text-gray-600">Enhance trust and belonging among community members through offline activities and services, building a harmonious human-pet coexistence environment.</p>
+                            </div>
+                        </li>
+                    </div>
+                    
+                    <!-- Caregiver Services -->
+                    <div id="walker-services" class="space-y-6 hidden">
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mr-4">
+                                <i class="fa fa-calendar-check-o text-secondary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium mb-2">Flexible Work Arrangements</h4>
+                                <p class="text-gray-600">Freely choose service times and locations, work according to your own schedule, and easily balance studies and part-time work.</p>
+                            </div>
+                        </li>
+                        
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mr-4">
+                                <i class="fa fa-money text-secondary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium mb-2">Stable Income Source</h4>
+                                <p class="text-gray-600">Earn extra income by taking care of可爱 pets, with instant settlement after service completion and guaranteed fund security.</p>
+                            </div>
+                        </li>
+                        
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mr-4">
+                                <i class="fa fa-graduation-cap text-secondary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium mb-2">Professional Skills Training</h4>
+                                <p class="text-gray-600">Receive free pet care knowledge training and certification to enhance professional skills and increase service competitiveness.</p>
+                            </div>
+                        </li>
+                        
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mr-4">
+                                <i class="fa fa-heart text-secondary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-medium mb-2">Love Practice Opportunities</h4>
+                                <p class="text-gray-600">Spend time with可爱 pets while studying, spread love, and enrich campus life experience.</p>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+                
+                <div data-aos="fade-left" data-aos-delay="200">
+                    <h3 class="text-2xl font-semibold mb-6">Role Selection</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="role-card border-2 border-gray-200 rounded-xl p-6 text-center" onclick="toggleRoleCard(this)">
+                            <div class="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-user text-primary text-2xl"></i>
+                            </div>
+                            <h4 class="text-lg font-medium mb-2">I'm a Pet Owner</h4>
+                            <p class="text-gray-600 mb-4">Find trustworthy caregivers to provide love and companionship for your pet</p>
+                            <div class="flex justify-center space-x-4 text-sm text-gray-500">
+                                <span><i class="fa fa-check text-primary mr-1"></i> Easy Booking</span>
+                                <span><i class="fa fa-check text-primary mr-1"></i> Real-time Tracking</span>
+                            </div>
+                        </div>
+                        
+                        <div class="role-card border-2 border-gray-200 rounded-xl p-6 text-center" onclick="toggleRoleCard(this)">
+                            <div class="w-16 h-16 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mx-auto mb-4">
+                                <i class="fa fa-paw text-secondary text-2xl"></i>
+                            </div>
+                            <h4 class="text-lg font-medium mb-2">I'm a Caregiver</h4>
+                            <p class="text-gray-600 mb-4">Earn income and growth opportunities by taking care of可爱 pets</p>
+                            <div class="flex justify-center space-x-4 text-sm text-gray-500">
+                                <span><i class="fa fa-check text-secondary mr-1"></i> Flexible Hours</span>
+                                <span><i class="fa fa-check text-secondary mr-1"></i> Stable Income</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-light rounded-2xl p-8 shadow-custom" data-aos="fade-up">
+                <h3 class="text-2xl font-semibold mb-12 text-center">Service Process</h3>
+                
+                <!-- Step 1: Login & Role Selection -->
+                <div class="flex flex-col md:flex-row items-center gap-12 mb-20">
+                    <div class="md:w-1/2 order-2 md:order-1" data-aos="fade-right">
+                        <div class="flex items-center mb-6">
+                            <div class="process-step-number w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white font-bold text-2xl">1</div>
+                            <h4 class="text-2xl font-semibold ml-4">Login & Role Selection</h4>
+                        </div>
+                        <p class="text-gray-600 text-lg mb-6">Quick login via WeChat authorization and select your identity - "I'm a Pet Owner" or "I'm a Caregiver". This precisely positions user needs and initiates the corresponding service process.</p>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200">
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> One-click WeChat login, no registration required</p>
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> Dual-role design to meet different user needs</p>
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> Personalized user experience with precise service matching</p>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 order-1 md:order-2" data-aos="fade-left" data-aos-delay="200">
+                        <div class="phone-frame">
+                            <div class="phone-screen">
+                                <img src="https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/473c383864e4408cb43f9368d9656148.jpg~tplv-a9rns2rl98-24:720:720.image?rcl=202511081854393ECD3B903C48B917CC95&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1763204079&x-signature=WX0tEMT2%2FEo5dRDDMjMaENPhMwE%3D" alt="Login & Role Selection" class="phone-content">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Publish Request -->
+                <div class="flex flex-col md:flex-row items-center gap-12 mb-20">
+                    <div class="md:w-1/2" data-aos="fade-right">
+                        <div class="phone-frame">
+                            <div class="phone-screen">
+                                <img src="https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/f5a864898a26472183cdce69ea44882e.jpg~tplv-a9rns2rl98-24:720:720.image?rcl=202511081854393ECD3B903C48B917CC95&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1763204079&x-signature=09TcwH5grJ9V67omRfj6PyAcnt4%3D" alt="Publish Request" class="phone-content">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2" data-aos="fade-left" data-aos-delay="200">
+                        <div class="flex items-center mb-6">
+                            <div class="process-step-number w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white font-bold text-2xl">2</div>
+                            <h4 class="text-2xl font-semibold ml-4">Publish Request</h4>
+                        </div>
+                        <p class="text-gray-600 text-lg mb-6">Pet owners fill out a basic service request form with core information including: service date, time, location, and pet basic information. The simple and clear form design makes the booking process easy and fast.</p>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200">
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> Intuitive date and time picker</p>
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> Map positioning for precise service location selection</p>
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> One-click submission for quick booking completion</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Matching & Confirmation -->
+                <div class="flex flex-col md:flex-row items-center gap-12 mb-20">
+                    <div class="md:w-1/2 order-2 md:order-1" data-aos="fade-right">
+                        <div class="flex items-center mb-6">
+                            <div class="process-step-number w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white font-bold text-2xl">3</div>
+                            <h4 class="text-2xl font-semibold ml-4">Matching & Confirmation</h4>
+                        </div>
+                        <p class="text-gray-600 text-lg mb-6">The platform intelligently matches and displays qualified caregivers based on requirements. Pet owners can view caregiver profiles, add more detailed pet information and special requirements, and finally confirm the order.</p>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200">
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> Intelligent matching algorithm for precise recommendations</p>
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> Transparent caregiver profile display</p>
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> Detailed pet information supplement</p>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 order-1 md:order-2" data-aos="fade-left" data-aos-delay="200">
+                        <div class="phone-frame">
+                            <div class="phone-screen">
+                                <img src="https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/b8e63b58a72e497081d89d470aca7aea.jpg~tplv-a9rns2rl98-24:720:720.image?rcl=202511081854393ECD3B903C48B917CC95&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1763204079&x-signature=4WpAmvTHAEGG4CNIv0B2VgoWWHI%3D" alt="Matching & Confirmation" class="phone-content">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Execution & Tracking -->
+                <div class="flex flex-col md:flex-row items-center gap-12">
+                    <div class="md:w-1/2" data-aos="fade-right">
+                        <div class="phone-frame">
+                            <div class="phone-screen">
+                                <img src="https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/5d126a8a67514563a890532b8a22e32c.jpg~tplv-a9rns2rl98-24:720:720.image?rcl=202511081854393ECD3B903C48B917CC95&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1763204079&x-signature=LN7zUQdUQrb57zmM%2BNNBwtaHf8c%3D" alt="Execution & Tracking" class="phone-content">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2" data-aos="fade-left" data-aos-delay="200">
+                        <div class="flex items-center mb-6">
+                            <div class="process-step-number w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white font-bold text-2xl">4</div>
+                            <h4 class="text-2xl font-semibold ml-4">Execution & Tracking</h4>
+                        </div>
+                        <p class="text-gray-600 text-lg mb-6">During the service, owners can view the real-time service status. After completion, the system requires caregivers to upload service photos as completion certificates, providing owners with intuitive "peace of mind feedback," and finally complete online payment.</p>
+                        <div class="bg-white p-4 rounded-lg border border-gray-200">
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> Real-time tracking to stay updated on service status</p>
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> Photo feedback to visually demonstrate service results</p>
+                            <p class="text-gray-700"><i class="fa fa-check-circle text-primary mr-2"></i> Multiple payment methods, safe and convenient</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- Market Analysis -->
+    <section id="market" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Market Analysis</h2>
+                <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+                <p class="text-gray-600 max-w-2xl mx-auto">Three major trends together create the perfect timing for PawMate's entry, with market demand and supply conditions now mature.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div class="bg-light p-8 rounded-xl shadow-custom card-hover" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 rounded-full bg-tertiary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fa fa-heart text-tertiary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Social Attitude Shift</h3>
+                    <p class="text-gray-600">The "pet humanization" trend is becoming increasingly apparent, with owners willing to pay for their pets' "happiness" and their own "peace of mind." Meanwhile, the blurring boundaries between work and life have made flexible care services a necessity.</p>
+                </div>
+                
+                <div class="bg-light p-8 rounded-xl shadow-custom card-hover" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 rounded-full bg-tertiary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fa fa-exclamation-triangle text-tertiary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Market Pain Points Highlighted</h3>
+                    <p class="text-gray-600">The current lack of service supply and trust deficit have reached a critical point, with the market calling for a standardized, platform-based solution to provide reliable service options for pet owners.</p>
+                </div>
+                
+                <div class="bg-light p-8 rounded-xl shadow-custom card-hover" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 rounded-full bg-tertiary bg-opacity-10 flex items-center justify-center mb-6">
+                        <i class="fa fa-users text-tertiary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Key Elements Mature</h3>
+                    <p class="text-gray-600">College students form a large and high-quality potential service provider group (with time, love, and part-time needs), while the asset-light platform model allows us to launch quickly and scale efficiently.</p>
+                </div>
+            </div>
+            
+            <div class="bg-light rounded-2xl p-8 shadow-custom" data-aos="fade-up">
+                <h3 class="text-2xl font-semibold mb-8 text-center">Business Model</h3>
+                <div class="flex flex-col md:flex-row items-center gap-12">
+                    <div class="md:w-1/2">
+                        <div class="relative">
+                            <div class="absolute -top-4 -left-4 w-20 h-20 rounded-full bg-primary bg-opacity-10 flex items-center justify-center">
+                                <i class="fa fa-users text-primary text-3xl"></i>
+                            </div>
+                            <div class="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center">
+                                <i class="fa fa-paw text-secondary text-3xl"></i>
+                            </div>
+                            <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+                                <h4 class="text-xl font-semibold mb-6 text-center">Community Trust-Driven Two-Sided Network</h4>
+                                <div class="flex items-center justify-center mb-8">
+                                    <div class="w-1/3 text-center p-4 border-r border-gray-200">
+                                        <h5 class="font-medium mb-2">Pet Owners</h5>
+                                        <p class="text-sm text-gray-600">Gain peace of mind and convenience</p>
+                                    </div>
+                                    <div class="w-1/3 text-center p-4">
+                                        <div class="w-10 h-10 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mx-auto mb-2">
+                                            <i class="fa fa-exchange text-primary"></i>
+                                        </div>
+                                        <p class="text-sm text-gray-600">PawMate Platform</p>
+                                    </div>
+                                    <div class="w-1/3 text-center p-4 border-l border-gray-200">
+                                        <h5 class="font-medium mb-2">Student Caregivers</h5>
+                                        <p class="text-sm text-gray-600">Gain income, skills and practice opportunities</p>
+                                    </div>
+                                </div>
+                                <ul class="space-y-4 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                                        <span>Trust closed loop: Community trust endorsement solves the initial trust problem</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                                        <span>Value symbiosis: Both users can get the value they need</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-check-circle text-primary mt-1 mr-2"></i>
+                                        <span>Efficient asset-light: Platform achieves precise matching through technical tools</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="md:w-1/2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                                <h4 class="text-lg font-semibold mb-4 flex items-center">
+                                    <i class="fa fa-money text-primary mr-2"></i>
+                                    Revenue Streams
+                                </h4>
+                                <ul class="space-y-3 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i class="fa fa-circle text-xs text-primary mt-1.5 mr-2"></i>
+                                        <span>Transaction commission: Service commission on each completed order</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-circle text-xs text-primary mt-1.5 mr-2"></i>
+                                        <span>Membership subscription: Exclusive benefits for high-frequency users</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-circle text-xs text-primary mt-1.5 mr-2"></i>
+                                        <span>Value-added services: Such as pet insurance, health consultation, etc.</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                                <h4 class="text-lg font-semibold mb-4 flex items-center">
+                                    <i class="fa fa-line-chart text-secondary mr-2"></i>
+                                    Cost Structure
+                                </h4>
+                                <ul class="space-y-3 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i class="fa fa-circle text-xs text-secondary mt-1.5 mr-2"></i>
+                                        <span>Platform development: Initial fixed technology development investment</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-circle text-xs text-secondary mt-1.5 mr-2"></i>
+                                        <span>Operating costs: Ongoing platform operation and trust guarantee investment</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-circle text-xs text-secondary mt-1.5 mr-2"></i>
+                                        <span>Marketing expenses: User acquisition and brand promotion expenditure</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Feedback -->
+    <section class="py-20 bg-light">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">User Feedback</h2>
+                <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+                <p class="text-gray-600 max-w-2xl mx-auto">In initial concept and prototype testing, we received positive feedback from target users, validating our accurate grasp of the two core needs: "trust" and "convenience."</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-custom" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-center mb-6">
+                        <div class="text-yellow-400 flex">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                        <span class="ml-2 text-gray-500">5.0</span>
+                    </div>
+                    <p class="text-gray-600 mb-6">"You can view the dog walker's student ID and pet care certificate, and also set 'dog taboos' (like my dog is afraid of cats), these details are very thoughtful!"</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                            <i class="fa fa-user text-gray-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium">Laureate</h4>
+                            <p class="text-sm text-gray-500">Pet Owner</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-xl shadow-custom" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-center mb-6">
+                        <div class="text-yellow-400 flex">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                        <span class="ml-2 text-gray-500">5.0</span>
+                    </div>
+                    <p class="text-gray-600 mb-6">"The booking process has only three steps: select time, select person, confirm order. The interface has no unnecessary ads, and you can easily complete the booking without any guidance, the experience is great!"</p>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                            <i class="fa fa-user text-gray-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium">Mint</h4>
+                            <p class="text-sm text-gray-500">Pet Owner</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vision -->
+    <section id="vision" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Our Vision</h2>
+                <div class="w-24 h-1 bg-primary mx-auto mb-6"></div>
+                <p class="text-gray-600 max-w-2xl mx-auto">Our vision goes far beyond a business project; we hope to create multiple values for society through PawMate.</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2" data-aos="fade-right">
+                    <img src="https://p3-flow-imagex-download-sign.byteimg.com/tos-cn-i-a9rns2rl98/46583875108d4582935457b7763cdd4b.jpg~tplv-a9rns2rl98-24:720:720.png?rcl=20251107131837DAF46C3791EEDE935BC0&rk3s=8e244e95&rrcfp=8a172a1a&x-expires=1763097518&x-signature=VBL5v6cWlxmn47Y%2BktXpPF0Xcj0%3D" alt="Cute Pet" class="rounded-xl shadow-xl w-full">
+                </div>
+                
+                <div class="md:w-1/2" data-aos="fade-left" data-aos-delay="200">
+                    <div class="space-y-8">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mr-6">
+                                <i class="fa fa-paw text-primary text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">For Pets</h3>
+                                <p class="text-gray-600">Bringing happier, healthier lives. Through professional care and ample companionship, every pet can enjoy a high-quality life, reducing loneliness and behavioral problems caused by busy owners.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-16 h-16 rounded-full bg-secondary bg-opacity-10 flex items-center justify-center mr-6">
+                                <i class="fa fa-graduation-cap text-secondary text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">For Young People</h3>
+                                <p class="text-gray-600">Providing a valuable, growth-oriented practice and income platform. By taking care of pets, students can not only earn income but also develop a sense of responsibility, empathy, and professional skills, laying the foundation for future career development.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-16 h-16 rounded-full bg-tertiary bg-opacity-10 flex items-center justify-center mr-6">
+                                <i class="fa fa-home text-tertiary text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">For Communities</h3>
+                                <p class="text-gray-600">Building a more harmonious and trusting human-pet coexistence environment. By connecting community members through the platform, promoting neighborhood interaction, reducing conflicts caused by pet issues, and creating a warm and friendly community atmosphere.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Us -->
+    <section class="py-20 bg-gradient-to-r from-primary to-secondary text-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Contact Us</h2>
+                <div class="w-24 h-1 bg-white mx-auto mb-6"></div>
+                <p class="max-w-2xl mx-auto">We are seeking pre-seed funding support and strategic partners to jointly shape a more compassionate and harmonious future for humans and pets.</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-12">
+                <div class="md:w-1/2" data-aos="fade-right">
+                    <form class="bg-white rounded-xl p-8 shadow-xl text-dark">
+                        <div class="mb-6">
+                            <label for="name" class="block text-gray-700 font-medium mb-2">Name</label>
+                            <input type="text" id="name" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
+                            <input type="email" id="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary">
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label for="message" class="block text-gray-700 font-medium mb-2">Message</label>
+                            <textarea id="message" rows="5" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-primary text-white font-medium py-3 rounded-lg hover:bg-opacity-90 transition-custom">Send Message</button>
+                    </form>
+                </div>
+                
+                <div class="md:w-1/2" data-aos="fade-left" data-aos-delay="200">
+                    <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-xl p-8 h-full">
+                        <h3 class="text-2xl font-semibold mb-6">Contact Information</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center mr-4">
+                                    <i class="fa fa-envelope text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium mb-1">Email</h4>
+                                    <p>2022363050@email.szu.edu.cn</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center mr-4">
+                                    <i class="fa fa-map-marker text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium mb-1">Address</h4>
+                                    <p>3688 Nanhai Avenue, Nanshan District, Shenzhen</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center mr-4">
+                                    <i class="fa fa-wechat text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium mb-1">WeChat</h4>
+                                    <p>PawMate_official</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-12">
+                            <h3 class="text-xl font-semibold mb-4">Follow Us</h3>
+                            <div class="flex space-x-4">
+                                <a href="#" class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-custom">
+                                    <i class="fa fa-weibo text-white"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-custom">
+                                    <i class="fa fa-wechat text-white"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-custom">
+                                    <i class="fa fa-instagram text-white"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition-custom">
+                                    <i class="fa fa-linkedin text-white"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <a href="#" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 rounded-full bg-gradient flex items-center justify-center">
+                            <i class="fa fa-paw text-white text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold">PawMate</span>
+                    </a>
+                    <p class="mt-2 text-gray-400">Building a Trust-Driven Community Pet Care Platform</p>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-8">
+                    <a href="#overview" class="text-gray-400 hover:text-white transition-custom">Project Overview</a>
+                    <a href="#problem" class="text-gray-400 hover:text-white transition-custom">Problem Statement</a>
+                    <a href="#solution" class="text-gray-400 hover:text-white transition-custom">Solution</a>
+                    <a href="#product" class="text-gray-400 hover:text-white transition-custom">Product Showcase</a>
+                    <a href="#market" class="text-gray-400 hover:text-white transition-custom">Market Analysis</a>
+                    <a href="#vision" class="text-gray-400 hover:text-white transition-custom">Vision</a>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">© 2025 PawMate. All rights reserved.</p>
+                <div class="mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white transition-custom mr-4">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-custom">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize AOS animation library
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 100
+            });
+            
+            // Navbar scroll effect
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('navbar-fixed', 'bg-white');
+                } else {
+                    navbar.classList.remove('navbar-fixed');
+                }
+            });
+            
+            // Mobile menu toggle
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            menuToggle.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Initialize carousel
+            initCarousel();
+            
+            // Form submission event
+            const contactForm = document.querySelector('form');
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const message = document.getElementById('message').value;
+                
+                if (name && email && message) {
+                    alert('Thank you for your message! We will get back to you soon.');
+                    contactForm.reset();
+                } else {
+                    alert('Please fill in all required fields.');
+                }
+            });
+        });
+        
+        // Role card toggle
+        function toggleRoleCard(card) {
+            const cards = document.querySelectorAll('.role-card');
+            cards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            
+            // Toggle core services content
+            const ownerServices = document.getElementById('owner-services');
+            const walkerServices = document.getElementById('walker-services');
+            
+            if (card.querySelector('h4').textContent === 'I\'m a Pet Owner') {
+                ownerServices.classList.remove('hidden');
+                walkerServices.classList.add('hidden');
+            } else {
+                ownerServices.classList.add('hidden');
+                walkerServices.classList.remove('hidden');
+            }
+        }
+        
+        // Carousel functionality
+        function initCarousel() {
+            const carousel = document.querySelector('.carousel');
+            const carouselInner = carousel.querySelector('.carousel-inner');
+            const carouselItems = carousel.querySelectorAll('.carousel-item');
+            const indicators = carousel.querySelectorAll('.carousel-indicator');
+            let currentIndex = 0;
+            let interval;
+            
+            // Set carousel item width
+            carouselItems.forEach(item => {
+                item.style.width = '100%';
+            });
+            
+            // Update carousel position
+            function updateCarousel() {
+                carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                // Update indicator status
+                indicators.forEach((indicator, index) => {
+                    if (index === currentIndex) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Next slide
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % carouselItems.length;
+                updateCarousel();
+            }
+            
+            // Click indicator to switch
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateCarousel();
+                    resetInterval();
+                });
+            });
+            
+            // Auto carousel
+            function startInterval() {
+                interval = setInterval(nextSlide, 3000);
+            }
+            
+            // Reset auto carousel
+            function resetInterval() {
+                clearInterval(interval);
+                startInterval();
+            }
+            
+            // Start auto carousel
+            startInterval();
+            
+            // Pause carousel on mouse enter
+            carousel.addEventListener('mouseenter', () => {
+                clearInterval(interval);
+            });
+            
+            // Resume carousel on mouse leave
+            carousel.addEventListener('mouseleave', startInterval);
+        }
+    </script>
+</body>
+</html>
